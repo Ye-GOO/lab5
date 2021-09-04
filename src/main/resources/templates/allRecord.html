@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <th>姓名</th>
+        <th>学号</th>
+        <th>证件类型</th>
+        <th>证件号码</th>
+        <th>身份类型</th>
+        <th>校区</th>
+        <th>学院</th>
+        <th>班级</th>
+        <th>电话</th>
+        <th>紧急联系人</th>
+        <th>紧急联系人电话</th>
+
+    </tr>
+    <tr>
+        <td th:text="${user.userName}"></td>
+        <td th:text="${user.account}"></td>
+        <td th:text="${user.certificates}"></td>
+        <td th:text="${user.certificatesNo}"></td>
+        <td th:text="${user.identity}"></td>
+        <td th:text="${user.campus}"></td>
+        <td th:text="${user.college}"></td>
+        <td th:text="${user.classes}"></td>
+        <td th:text="${user.phonenumber}"></td>
+        <td th:text="${user.emergencycontact}"></td>
+        <td th:text="${user.emergencynumber}"></td>
+    </tr>
+</table>
+<table border="1">
+    <tr>
+        <td>日期</td>
+        <td>身体状况</td>
+        <td>近14天是否到达过疫区</td>
+        <td>近14天是否接触过进入疫区的人员</td>
+        <td>近14天是否接触过疑似/确诊病例</td>
+        <td>是否在隔离</td>
+        <td>是否在莞</td>
+        <td>目前所在地</td>
+        <td>体温</td>
+        <td>到达过的疫区</td>
+    </tr>
+    <tr th:each="clock : ${user.clockList}">
+        <td th:text="${clock.date}"></td>
+        <td th:text="${clock.physicalcondition}"></td>
+        <td th:text="${clock.reachkeyareas}"></td>
+        <td th:text="${clock.contactpersonnel14}"></td>
+        <td th:text="${clock.contactpersonnel}"></td>
+        <td th:text="${clock.quarantine}"></td>
+        <td th:text="${clock.inDG}"></td>
+        <td th:text="${clock.province}+${clock.city}"></td>
+        <td th:text="${clock.temperature}"></td>
+        <td th:text="${clock.channel}"></td>
+    </tr>
+</table>
+
+
+<a th:if="${flag}==1" href="/fever">返回</a>
+<a th:if="${flag}==2" href="/channel">返回</a>
+
+</body>
+</html>

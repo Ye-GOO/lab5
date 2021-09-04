@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+
+<link rel="stylesheet" href="css/a.css">
+<body background="img/bg.jpg" style="background-size:cover; background-attachment:fixed;">
+
+<div id="log" style="text-align:center">
+    <form action="/verify" method="post">
+        <font th:text="${error}"></font>
+        <br>
+        <input type="text" name="account" placeholder="请输入学号" style="font-size:25px"><br><br>
+        <input type="password" name="password" placeholder="请输入密码" style="font-size:25px"><br>
+        <input type="checkbox" name="rememberMe">自动登录<br>
+        <div>
+            <input type="submit" value="登录">
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

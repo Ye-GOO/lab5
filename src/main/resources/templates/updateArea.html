@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+</head>
+<script src="js/jquery-3.5.1.js"></script>
+<script src="js/info.js"></script>
+<script th:inline="javascript">
+    function getCity(p, c) {
+        var provincesobj = document.getElementById(p);
+        var cityobj = document.getElementById(c);
+        var index = provincesobj.selectedIndex - 1;
+        var cityName = cityArr[index];
+        cityobj.length = 1;
+        for (var i = 1; i < cityArr[index].length; i++) {
+            cityobj.options[cityobj.options.length] = new Option(cityName[i], cityName[i]);
+        }
+    }
+
+    function lasttime() {
+        var myDate = new Date();
+        var month = myDate.getMonth() + 1;
+        if (month < 10)
+            month = '0' + month
+        var d = myDate.getFullYear() + "-" + month + "-" + myDate.getDate()
+        document.getElementById("date").value = d;
+
+        var province = document.getElementsByName("province");
+        var city = document.getElementsByName("city");
+        var location = document.getElementsByName("location");
+        var level = document.getElementsByName("level");
+        for (var i = 0; i < province.length; i++) {
+            init('p' + i, province[i].value);
+            getCity('p' + i, 'c' + i);
+            init('c' + i, city[i].value)
+            document.getElementById('lo' + i).value = location[i].value;
+            init('le' + i, level[i].value)
+        }
+    }
+
+    function init(id, str) {
+        var ddl = document.getElementById(id);
+        for (var i = 0; i < ddl.options.length; i++) {
+            if (ddl.options[i].value == str) {
+                ddl.selectedIndex = i
+                break;
+            }
+        }
+    }
+
+    function Delete(id) {
+        var tr = document.getElementById(id);
+        tr.remove();
+    }
+
+    function check(){
+        var province = document.getElementsByName("province");
+        var city = document.getElementsByName("city");
+        var location = document.getElementsByName("location");
+        for (var i = 0; i < province.length; i++) {
+            if(province[i].value ==1 || city[i].value==1 ||location[i].value ==""){
+                alert("请补充完整信息");
+                return false;
+            }
+        }
+    }
+
+</script>
+
+<body>
+<script>
+    if('[[${error}]]'!=""){
+        alert('[[${error}]]')
+    }
+    if('[[${success}]]'!=""){
+        alert('[[${success}]]')
+    }
+
+</script>
+
+
+<input type="text" id="date" disabled="disabled">
+<div th:each="riskArea:${riskAreaList}">
+    <input type="text" hidden="hidden" name="province" th:value="${riskArea.province}">
+    <input type="text" hidden="hidden" name="city" th:value="${riskArea.city}">
+    <input type="text" hidden="hidden" name="location" th:value="${riskArea.location}">
+    <input type="text" hidden="hidden" name="level"  th:value="${riskArea.level}">
+</div>
+<h2 >添加风险地区</h2>
+<form action="/submit" method="post" >
+    <table border="1">
+        <tr>
+            <th>省份</th>
+            <th>市</th>
+            <th>具体位置</th>
+            <th>风险等级</th>
+            <th>删除</th>
+        </tr>
+        <tr th:each="riskArea, Stat: ${riskAreaList}" th:id="'tr'+${Stat.index}">
+            <td>
+                <input name="count" th:value="${Stat.size}" hidden="hidden">
+                <select th:name="'province'+${Stat.index}" th:id="'p'+${Stat.index}"
+                        th:onchange="getCity('p'+[[${Stat.index}]],'c'+[[${Stat.index}]])">
+                    <option value="省份">省份</option>
+                    <!-- 利用js把省份添加到下拉列表里-->
+                    <script type="text/javascript">
+                        for (var i = 0; i < provinceArr.length; i++) {
+                            document.write("<option value='" + provinceArr[i] + "'>" + provinceArr[i] + "</option>");
+                        }
+                    </script>
+                </select>
+            </td>
+            <td>
+                <select th:name="'city'+${Stat.index}" th:id="'c'+${Stat.index}">
+                    <option value="城市">城市</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" th:name="'location'+${Stat.index}" th:id="'lo'+${Stat.index}">
+            </td>
+            <td>
+                <select th:name="'level'+${Stat.index}" th:id="'le'+${Stat.index}">
+                    <option value="低风险地区">低风险地区</option>
+                    <option value="中风险地区">中风险地区</option>
+                    <option value="高风险地区">高风险地区</option>
+                </select>
+            </td>
+            <td>
+                <input type="button" value="删除" th:onclick="Delete('tr'+[[${Stat.index}]])">
+            </td>
+        </tr>
+
+    </table>
+    <input type="submit" name="add" value="添加" />
+    <input type="submit" name="update" value="修改">
+</form>
+<script>
+    lasttime();
+</script>
+
+</body>
+</html>

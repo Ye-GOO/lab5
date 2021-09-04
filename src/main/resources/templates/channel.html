@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+</head>
+<script src="js/jquery-3.5.1.js"></script>
+<script>
+    function findChannel() {
+        $.ajax({
+                url: "/findChannel",
+                type: "get",
+                dataType: "json",
+                data: {
+                    "date": $('#date').val(),
+                },
+
+                success: function (data) {
+                    $("#t_body").empty();
+                    var str = "";
+                    for (var i = 0; i < data.length; i++) {
+                        str += "<tr>" +
+                            "<td>" + data[i].userName + "</td>" +
+                            "<td>" + data[i].account + "</td>" +
+                            "<td>" + data[i].certificates + "</td>" +
+                            "<td>" + data[i].certificatesNo + "</td>" +
+                            "<td>" + data[i].identity + "</td>" +
+                            "<td>" + data[i].campus + "</td>" +
+                            "<td>" + data[i].college + "</td>" +
+                            "<td>" + data[i].classes + "</td>" +
+                            "<td>" + data[i].phonenumber + "</td>" +
+                            "<td>" + data[i].emergencycontact + "</td>" +
+                            "<td>" + data[i].emergencynumber + "</td>" +
+                            "<td>" + data[i].clockList[0].temperature + "</td>" +
+                            "<td>" + data[i].clockList[0].channel + "</td>" +
+                            "<td> <a href=/allRecord/"  + data[i].account + "/2" +">查看</a></td>" +
+                            "</tr>";
+                    }
+                    console.log(str);
+                    $("#t_body").append(str);
+
+                }
+            }
+        )
+    }
+    function init(){
+        date  = '[[${session.cdate}]]'
+        $("#date").val(date);
+        findChannel();
+    }
+</script>
+
+<body onload="init()">
+<input type="date" th:onchange="findChannel()" id="date">
+<h2 align="center">途径重点区域名单</h2>
+<table border="1" align="center">
+    <thead>
+    <tr>
+        <th>姓名</th>
+        <th>学号</th>
+        <th>证件类型</th>
+        <th>证件号码</th>
+        <th>身份类型</th>
+        <th>校区</th>
+        <th>学院</th>
+        <th>班级</th>
+        <th>电话</th>
+        <th>紧急联系人</th>
+        <th>紧急联系人电话</th>
+        <th>体温</th>
+        <th>途径风险地区</th>
+        <th>详细信息</th>
+    </tr>
+    </thead>
+    <tbody id="t_body">
+
+    </tbody>
+</table>
+</body>
+</html>

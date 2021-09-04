@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+</head>
+<script src="js/jquery-3.5.1.js"></script>
+<script>
+    function findRiskArea() {
+        $.ajax({
+                url: "/findRiskArea",
+                type: "get",
+                dataType: "json",
+                data: {
+                    "date": $('#date').val(),
+                },
+
+                success: function (data) {
+                    $("#t_body").empty()
+                    var str = ""
+                    for (var i = 0; i < data.length; i++) {
+                        str += "<tr>" +
+                            "<td>" + data[i].province + "</td>" +
+                            "<td>" + data[i].city + "</td>" +
+                            "<td>" + data[i].location + "</td>" +
+                            "<td>" + data[i].level + "</td>" +
+                            "</tr>";
+
+                    }
+                    $("#t_body").append(str);
+                }
+
+
+            }
+        )
+    }
+</script>
+<body>
+
+
+<input type="date" th:onchange="findRiskArea()" id="date">
+<h2 align="center">风险地区</h2>
+<table border="1" align="center">
+    <thead>
+    <tr>
+        <th>省份</th>
+        <th>市</th>
+        <th>具体位置</th>
+        <th>风险等级</th>
+    </tr>
+    </thead>
+    <tbody id="t_body">
+    </tbody>
+</table>
+
+
+</body>
+</html>

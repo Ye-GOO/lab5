@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>打卡</title>
+</head>
+
+
+<script src="js/info.js"></script>
+<link rel="stylesheet" href="css/a.css">
+
+<script>
+    //当省份的选择发生变化时调用 该方法   将市县加载到下拉选择框
+    function getCity() {
+        //1.获取省份选择框的对象
+        var provincesobj = document.getElementById("province");
+        //2.获取市县选择框的对象
+        var cityobj = document.getElementById("city");
+        //3.获取被选择的省份的索引
+        var index = provincesobj.selectedIndex - 1;
+
+        //alert(provincesobj[index].value+","+provincesobj[index].text);
+        //var value = provincesobj[index].value;
+
+        //5.获取对应省份的市县数组
+        var cityName = cityArr[index];
+        //6.将下拉框清楚索引为0之后的，只保留第一个
+        cityobj.length = 1;
+        //通过循环遍历市县元素给下拉框赋值
+        for (var i = 1; i < cityArr[index].length; i++) {
+            cityobj.options[cityobj.options.length] = new Option(cityName[i], cityName[i]);
+        }
+    }
+
+    function address_getCity() {
+        //1.获取省份选择框的对象
+        var provincesobj = document.getElementById("address_province");
+        //2.获取市县选择框的对象
+        var cityobj = document.getElementById("address_city");
+        //3.获取被选择的省份的索引
+        var index = provincesobj.selectedIndex - 1;
+
+        //alert(provincesobj[index].value+","+provincesobj[index].text);
+        //var value = provincesobj[index].value;
+
+        //5.获取对应省份的市县数组
+        var cityName = cityArr[index];
+        //6.将下拉框清楚索引为0之后的，只保留第一个
+        cityobj.length = 1;
+        //通过循环遍历市县元素给下拉框赋值
+        for (var i = 1; i < cityArr[index].length; i++) {
+            cityobj.options[cityobj.options.length] = new Option(cityName[i], cityName[i]);
+        }
+    }
+
+    function lasttime(){
+        init("address_province","[[${user.addressProvince}]]");
+        address_getCity();
+        init("address_city","[[${user.addressCity}]]");
+
+        init("province","[[${clock.province}]]");
+        getCity();
+        init("city","[[${clock.city}]]");
+
+        init("reachkeyareas","[[${clock.reachkeyareas}]]");
+        init("contactpersonnel14","[[${clock.contactpersonnel14}]]");
+        init("contactpersonnel","[[${clock.contactpersonnel}]]");
+        init("quarantine","[[${clock.quarantine}]]");
+        init("inDG","[[${clock.inDG}]]");
+
+    }
+
+    function init(id,str){
+        var ddl = document.getElementById(id);
+        for(var i=0;i<ddl.options.length;i++)
+        {
+            if(ddl.options[i].value == str)
+            {
+                ddl.selectedIndex = i
+                break;
+            }
+        }
+    }
+
+    function  keyarea() {
+        var value = document.getElementById("reachkeyareas").value;
+        var channel = document.getElementById("channel")
+        var text = document.getElementById("text")
+        if (value == '是') {
+            text.hidden=false
+            channel.hidden=false
+        }else{
+            text.hidden=true
+            channel.hidden=true
+        }
+    }
+
+    function  indg() {
+        var value = document.getElementById("inDG").value;
+        var province = document.getElementById("province")
+        var city = document.getElementById("city")
+        var text = document.getElementById("text2")
+        if (value != '是，在莞') {
+            province.hidden=false
+            city.hidden=false
+            text.hidden=false
+        }else{
+            province.hidden=true
+            city.hidden=true
+            text.hidden=true
+        }
+    }
+
+    function error(){
+        if('[[${error}]]'!="")
+            alert('[[${error}]]')
+    }
+    function read(){
+        lasttime();
+        keyarea();
+        indg();
+    }
+
+</script>
+
+<script>
+    error();
+</script>
+
+<body bgcolor="whitesmoke" onload="read()">
+<a href="/logout" style="float: right;color: black;text-decoration: none;">退出登录</a>
+<div id="img"><img src="img/b.PNG" style="height: 100%;width: 100%;"></div>
+
+<div id="top">
+    <font id="title" th:text="${message}" color="#FF0000" size="6" style="font-weight: bold"></font>
+
+    <div th:if="!${#lists.isEmpty(highRiskAreas)}">
+        高风险地区：<div th:each="h: ${highRiskAreas}">
+        <span th:text="${h.province}"></span>
+        <span th:text="${h.city}"></span>
+        <span th:text="${h.location}"></span>
+    </div>
+    </div>
+    <div th:if="!${#lists.isEmpty(midRiskAreas)}">
+        中风险地区：<div th:each="m: ${midRiskAreas}">
+        <span th:text="${m.province}"></span>
+        <span th:text="${m.city}"></span>
+        <span th:text="${m.location}"></span>
+    </div>
+    </div>
+    <div th:if="!${#lists.isEmpty(lowRiskAreas)}">
+        低风险地区：<div th:each="l: ${lowRiskAreas}">
+        <span th:text="${l.province}"></span>
+        <span th:text="${l.city}"></span>
+        <span th:text="${l.location}"></span>
+    </div>
+    </div>
+</div>
+
+<form action="/clock" method="post">
+
+    <div id="div1">
+        <div id="div2">
+            <h4>1.填报日期</h4>
+            <input type="date" name="date" th:value="${today}" disabled="disabled">
+
+            <h4>2.姓名</h4>
+            <input type="text" name="username" th:value="${user.userName}" disabled="disabled">
+
+            <h4>3.证件类型</h4>
+            <select name="certificates">
+                <option value="居民身份证">居民身份证</option>
+                <option value="香港特区护照">香港特区护照</option>
+                <option value="澳门特区护照">澳门特区护照</option>
+                <option value="台湾居民来往大陆通行证">台湾居民来往大陆通行证</option>
+                <option value="境外永久居住证">境外永久居住证</option>
+                <option value="护照">护照</option>
+                <option value="户口本">户口本</option>
+                <option value="其他">其他</option>
+            </select>
+
+            <h4>4.证件号码</h4>
+            <input type="text" name="certificatesNo" th:value="${user.certificatesNo}">
+
+            <h4>5.家庭住址</h4>
+            <select name="address_province" id="address_province" onchange="address_getCity()">
+                <option value="省份">省份</option>
+                <!-- 利用js把省份添加到下拉列表里-->
+                <script type="text/javascript">
+                    for (var i = 0; i < provinceArr.length; i++) {
+                        document.write("<option value='" + provinceArr[i] + "'>" + provinceArr[i] + "</option>");
+                    }
+                </script>
+            </select>
+
+            <select name="address_city" id="address_city">
+                <option value="城市">城市</option>
+            </select>
+
+            <h4>5.1街道</h4>
+            <input type="text" name="street" th:value="${user.street}">
+
+
+            <h4>6.身份类别</h4>
+            <input type="text" name="identity" value="学生用户" disabled="disabled">
+
+            <h4>7.所在校区</h4>
+            <select name="campus">
+                <option value="松山湖校区">松山湖校区</option>
+                <option value="莞城校区">莞城校区</option>
+            </select>
+
+
+            <h4>8.手机号码</h4>
+            <input type="text" name="phonenumber" th:value="${user.phonenumber}">
+
+
+            <h4>9.紧急联系人</h4>
+            <input type="text" name="emergencycontact" th:value="${user.emergencycontact}">
+
+            <h4>10.紧急联系人联系方法</h4>
+            <input type="text" name="emergencynumber" th:value="${user.emergencynumber}">
+        </div>
+
+        <div id="div3">
+            <h4>11.身体状况</h4>
+            <input type="text" name="physicalcondition" th:value="${clock.physicalcondition}">
+
+            <h4 th:text="'12.'+${pass} + '至' + ${today} + '期间是否到达或途径疫情防控重灾区'"></h4>
+            <select name="reachkeyareas" id="reachkeyareas" onchange="keyarea()">
+                <option value="否">否</option>
+                <option value="是">是</option>
+            </select
+            <h4 th:text="'12.1到达或途径的疫情防控重灾区'" id="text"></h4>
+            <select name="channel" id="channel">
+                <option th:each="k :${lowRiskAreas}" th:value="${k.province}+${k.city}+${k.location}" th:text="${k.province}+${k.city}+${k.location}"></option>
+                <option th:each="k :${midRiskAreas}" th:value="${k.province}+${k.city}+${k.location}" th:text="${k.province}+${k.city}+${k.location}"></option>
+                <option th:each="k :${highRiskAreas}" th:value="${k.province}+${k.city}+${k.location}" th:text="${k.province}+${k.city}+${k.location}"></option>
+            </select>
+
+            <h4 th:text="'13.'+${pass} + '至' + ${today} + '期间是否接触过近14天出入过疫情重点防控地区的人员'"></h4>
+            <select name="contactpersonnel14" id="contactpersonnel14">
+                <option value="否">否</option>
+                <option value="是">是</option>
+            </select>
+
+            <h4 th:text="'14.'+${pass}+ '至' + ${today} + '期间是否有接触过疑似/确诊病例'"></h4>
+            <select name="contactpersonnel" id="contactpersonnel">
+                <option value="否">否</option>
+                <option value="是">是</option>
+            </select>
+
+            <h4 th:text="15.是否在莞隔离医学观察"></h4>
+            <select name="quarantine" id="quarantine">
+                <option value="否，没有隔离">否，没有隔离</option>
+                <option value="否，在外地集中隔离或居家观察">否，在外地集中隔离或居家观察</option>
+                <option value="是，居家观察">是，居家观察</option>
+                <option value="是，集中隔离">是，集中隔离</option>
+            </select>
+
+            <h4 th:text="16.目前是否在莞"></h4>
+            <select name="inDG" id="inDG" onchange="indg()">
+                <option value="是，在莞">是，在莞</option>
+                <option value="否，已确定返莞时间">否，已确定返莞时间</option>
+                <option value="否，返莞时间未定">否，返莞时间未定</option>
+            </select>
+
+            <h4 th:text="16.1目前所在地" id="text2"></h4>
+            <select name="province" id="province" onchange="getCity()" >
+                <option value="省份">省份</option>
+                <!-- 利用js把省份添加到下拉列表里-->
+                <script type="text/javascript">
+                    for (var i = 0; i < provinceArr.length; i++) {
+                        document.write("<option value='" + provinceArr[i] + "'>" + provinceArr[i] + "</option>");
+                    }
+                </script>
+            </select>
+
+            <select name="city" id="city" >
+                <option value="城市">城市</option>
+            </select>
+
+            <h4>17.今日体温</h4>
+            <input type="text" name="temperature" th:value="${clock.temperature}"><br><br><br>
+
+            <input th:if="${no_sub==null}" type="submit" value="提交">
+            <input th:if="${no_sub==1}" type="submit" value="提交" disabled="disabled">
+        </div>
+    </div>
+</form>
+</body>
+
+</html>

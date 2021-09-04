@@ -1,0 +1,8 @@
+#div1{margin:0 auto; width: 1000px;height:1000px; border-style:solid;border-color: cornflowerblue;border-width: 2px}
+#div2{width: 500px;height:100%;background-color: white;float: left;text-align:center; }
+#div3{width: 500px;height:100%;background-color: white;float: right;text-align:center;}
+#top{margin:0 auto;width: 600px;text-align:center}
+#log{margin:0 auto;width: 500px;background-color: whitesmoke;position: absolute;left: 80px;top: 200px;filter:alpha(Opacity=80);-moz-opacity:0.5;opacity: 0.5;}
+#img{
+    margin:0 auto;width: 1000px;align-content: center;
+}
